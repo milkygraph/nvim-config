@@ -44,6 +44,13 @@ if true then
                     -- Specify * to use this function as a fallback for any server
                     -- ["*"] = function(server, opts) end,
                 },
+
+                -- Disable formating on save
+                autoformat = false,
+                format = {
+                    formatting_options = nil,
+                    timeout_ms = nil,
+                },
             },
         },
         {
@@ -51,7 +58,16 @@ if true then
             opts = {
                 messages = { view = "mini", view_warn = "mini" },
             }
-        }
+        },
+        -- add gruvbox
+        { "ellisonleao/gruvbox.nvim" },
+
+        -- change trouble config
+        {
+            "folke/trouble.nvim",
+            -- opts will be merged with the parent spec
+            opts = { use_diagnostic_signs = true },
+        },
     } end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
@@ -61,22 +77,12 @@ if true then
 -- * disable/enabled LazyVim plugins
 -- * override the configuration of LazyVim plugins
 return {
-  -- add gruvbox
-  { "ellisonleao/gruvbox.nvim" },
-
   -- Configure LazyVim to load gruvbox
   {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = "gruvbox",
     },
-  },
-
-  -- change trouble config
-  {
-    "folke/trouble.nvim",
-    -- opts will be merged with the parent spec
-    opts = { use_diagnostic_signs = true },
   },
 
   -- disable trouble
@@ -243,6 +249,8 @@ return {
         "shellcheck",
         "shfmt",
         "flake8",
+        "clangd",
+        "clang-format",
       },
     },
   },
