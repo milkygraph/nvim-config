@@ -1,6 +1,58 @@
 -- since this is just an example spec, don't actually load anything here and return an empty spec
 -- stylua: ignore
-if true then return {} end
+if true then
+    return {
+        -- add tsserver and setup with typescript.nvim instead of lspconfig
+        {
+            "neovim/nvim-lspconfig",
+            dependencies = {
+                "jose-elias-alvarez/typescript.nvim",
+                init = function()
+                    print("something")
+                    require("lazyvim.util").lsp.on_attach(function(_, buffer)
+                        -- stylua: ignore
+                        vim.keymap.set( "n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
+                        vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile", { desc = "Rename File", buffer = buffer })
+                    end)
+                end,
+            },
+            ---@class PluginLspOpts
+            opts = {
+                ---@type lspconfig.options
+                servers = {
+                    -- tsserver will be automatically installed with mason and loaded with lspconfig
+                    tsserver = {
+                        -- disable auto format
+                        settings = {
+                            tsserver = {
+                                format = {
+                                    enabled = false,
+                                }
+                            },
+                        },
+                    },
+                },
+                -- you can do any additional lsp server setup here
+                -- return true if you don't want this server to be setup with lspconfig
+                ---@type table<string, fun(server:string, opts:_.lspconfig.options):boolean?>
+                setup = {
+                    -- example to setup with typescript.nvim
+                    tsserver = function(_, opts)
+                        require("typescript").setup({ server = opts })
+                        return true
+                    end,
+                    -- Specify * to use this function as a fallback for any server
+                    -- ["*"] = function(server, opts) end,
+                },
+            },
+        },
+        {
+            "folke/noice.nvim",
+            opts = {
+                messages = { view = "mini", view_warn = "mini" },
+            }
+        }
+    } end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
 --
@@ -44,13 +96,13 @@ return {
   {
     "nvim-telescope/telescope.nvim",
     keys = {
-      -- add a keymap to browse plugin files
-      -- stylua: ignore
-      {
-        "<leader>fp",
-        function() require("telescope.builtin").find_files({ cwd = require("lazy.core.config").options.root }) end,
-        desc = "Find Plugin File",
-      },
+            -- add a keymap to browse plugin files
+            -- stylua: ignore
+            {
+                "<leader>fp",
+                function() require("telescope.builtin").find_files({ cwd = require("lazy.core.config").options.root }) end,
+                desc = "Find Plugin File",
+            },
     },
     -- change some options
     opts = {
@@ -71,33 +123,7 @@ return {
       ---@type lspconfig.options
       servers = {
         -- pyright will be automatically installed with mason and loaded with lspconfig
-        pyright = {
-          -- Disable too long line warning
-          --
-        },
-        pylsp = {
-          plugins = {
-            -- jedi_completion = {fuzzy = true},
-            -- jedi_completion = {eager=true},
-            jedi_completion = {
-              include_params = true,
-            },
-            jedi_signature_help = { enabled = true },
-            jedi = {
-              extra_paths = { "~/projects/work_odoo/odoo14", "~/projects/work_odoo/odoo14" },
-              -- environment = {"odoo"},
-            },
-            pyflakes = { enabled = true },
-            -- pylint = {args = {'--ignore=E501,E231', '-'}, enabled=true, debounce=200},
-            pylsp_mypy = { enabled = false },
-            pycodestyle = {
-              enabled = true,
-              ignore = { "E501", "E231" },
-              maxLineLength = 120,
-            },
-            yapf = { enabled = true },
-          },
-        },
+        pyright = {},
       },
     },
   },
@@ -109,8 +135,8 @@ return {
       "jose-elias-alvarez/typescript.nvim",
       init = function()
         require("lazyvim.util").lsp.on_attach(function(_, buffer)
-          -- stylua: ignore
-          vim.keymap.set( "n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
+                    -- stylua: ignore
+                    vim.keymap.set( "n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
           vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile", { desc = "Rename File", buffer = buffer })
         end)
       end,
@@ -183,7 +209,11 @@ return {
     "nvim-lualine/lualine.nvim",
     event = "VeryLazy",
     opts = function(_, opts)
-      table.insert(opts.sections.lualine_x, "😄")
+      table.insert(opts.sections.lualine_x, {
+        function()
+          return "😄"
+        end,
+      })
     end,
   },
 
