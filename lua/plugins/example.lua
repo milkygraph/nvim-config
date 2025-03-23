@@ -11,8 +11,10 @@ if true then
                     print("something")
                     require("lazyvim.util").lsp.on_attach(function(_, buffer)
                         -- stylua: ignore
-                        vim.keymap.set( "n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
-                        vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile", { desc = "Rename File", buffer = buffer })
+                        vim.keymap.set("n", "<leader>co", "TypescriptOrganizeImports",
+                            { buffer = buffer, desc = "Organize Imports" })
+                        vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile",
+                            { desc = "Rename File", buffer = buffer })
                     end)
                 end,
             },
@@ -41,8 +43,10 @@ if true then
                         require("typescript").setup({ server = opts })
                         return true
                     end,
-                    -- Specify * to use this function as a fallback for any server
-                    -- ["*"] = function(server, opts) end,
+
+                    clangd = function(_, opts)
+                        opts.capabilities.offsetEncoding = { "utf-16" }
+                    end,
                 },
 
                 -- Disable formating on save
@@ -68,7 +72,21 @@ if true then
             -- opts will be merged with the parent spec
             opts = { use_diagnostic_signs = true },
         },
-    } end
+        {
+            "nvim-telescope/telescope.nvim",
+            -- change some options
+            opts = {
+                defaults = {
+                    layout_strategy = "horizontal",
+                    layout_config = { prompt_position = "top" },
+                    sorting_strategy = "ascending",
+                    winblend = 0,
+                },
+                initial_mode = "normal",
+            },
+        },
+    }
+end
 
 -- every spec file under the "plugins" directory will be loaded automatically by lazy.nvim
 --
@@ -142,7 +160,8 @@ return {
       init = function()
         require("lazyvim.util").lsp.on_attach(function(_, buffer)
                     -- stylua: ignore
-                    vim.keymap.set( "n", "<leader>co", "TypescriptOrganizeImports", { buffer = buffer, desc = "Organize Imports" })
+                    vim.keymap.set("n", "<leader>co", "TypescriptOrganizeImports",
+                        { buffer = buffer, desc = "Organize Imports" })
           vim.keymap.set("n", "<leader>cR", "TypescriptRenameFile", { desc = "Rename File", buffer = buffer })
         end)
       end,

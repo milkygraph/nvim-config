@@ -15,3 +15,11 @@ vim.api.nvim_create_autocmd("CursorHold", {
     vim.diagnostic.open_float(nil, opts)
   end,
 })
+
+-- Disable autoformat for C files
+vim.api.nvim_create_autocmd({ "FileType" }, {
+  pattern = { "c", "c++" },
+  callback = function()
+    vim.b.autoformat = false
+  end,
+})
